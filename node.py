@@ -1,4 +1,4 @@
-import copy
+from copy import deepcopy
 
 
 class Node:
@@ -14,20 +14,15 @@ class Node:
         second_side = 'X' if starting_side == 'O' else 'O'
         num_to_side = {1: starting_side, 2: second_side}
 
-        def transform(x: int):
-            if x == 0:
-                return '[ ]'
-            else:
-                return f'[{num_to_side[x]}]'
-        transformed_position = [list(map(transform, row))
-                                for row in self.position]
-        board = '\n'.join([''.join(row) for row in transformed_position])
-        return board
+        def transform(x: int) -> str:
+            return '[ ]' if x == 0 else f'[{num_to_side[x]}]'
 
-    def append_child(self, child: 'Node'):
+        return '\n'.join([''.join(map(transform, row)) for row in self.position])
+
+    def append_child(self, child: 'Node') -> None:
         self.children.append(child)
 
-    def check_winner_or_drawn(self):
+    def check_winner_or_drawn(self) -> None:
         for i in range(3):
             # Check rows
             if self.position[i][0] == self.position[i][1] == self.position[i][2] and self.position[i][0] != 0:
@@ -48,17 +43,56 @@ class Node:
         if all(cell != 0 for row in self.position for cell in row):
             self.is_drawn = True
 
-# TODO Avoid duplicates
-    def create_children(self):
+    def create_children_recursively(self) -> None:
         if self.winner or self.is_drawn:
             return
         for i in range(3):
             for j in range(3):
                 if self.position[i][j] == 0:
                     next_turn = 1 if self.side_to_move == 2 else 2
-                    new_position = copy.deepcopy(self.position)
+                    new_position = deepcopy(self.position)
                     new_position[i][j] = self.side_to_move
-                    child_node = Node(next_turn, new_position)
-                    child_node.check_winner_or_drawn()
-                    self.append_child(child_node)
-                    child_node.create_children()
+                    new_child = Node(next_turn, new_position)
+                    new_child.check_winner_or_drawn()
+                    self.append_child(new_child)
+                    new_child.create_children_recursively()
+
+    # TODO understand
+    def set_minimax_recursively(self, depth: int = 0) -> int:
+        if self.winner:
+            self.minimax_value = 10 - depth if self.winner == 1 else depth - 10
+            return self.minimax_value
+        if self.is_drawn:
+            self.minimax_value = 0
+            return self.minimax_value
+        if self.side_to_move == 1:
+            max_eval = -100
+            for child in self.children:
+                eval: int = child.set_minimax_recursively(depth + 1)
+                max_eval = max(max_eval, eval)
+            self.minimax_value = max_eval
+            return max_eval
+        else:
+            min_eval = 100
+            for child in self.children:
+                eval = child.set_minimax_recursively(depth + 1)
+                min_eval = min(min_eval, eval)
+            self.minimax_value = min_eval
+            return min_eval
+
+    # TODO understand
+    def get_best_move(self) -> 'Node':
+        best_move = self
+        if self.side_to_move == 1:
+            best_value = -10
+            for child in self.children:
+                if child.minimax_value > best_value:
+                    best_value = child.minimax_value
+                    best_move = child
+        else:
+            best_value = 10
+            for child in self.children:
+                if child.minimax_value < best_value:
+                    best_value = child.minimax_value
+                    best_move = child
+        return best_move
