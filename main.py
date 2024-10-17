@@ -43,11 +43,9 @@ def main() -> None:
         root.create_children_recursively()
         root.set_minimax_recursively()
         cache_tree(root)
-
     # Either set an empty board as the starting position for the human or select a random first move for the AI
     current_node: Node = root if starting_player == 'human' else choice(
         root.children)
-
     # Game loop
     while True:
         print(current_node.to_str(starting_side))
@@ -74,7 +72,7 @@ def main() -> None:
             print('Computer\'s move', end='')
             for _ in range(3):
                 print('.', end='')
-                sleep(1)
+                sleep(0.5)
             print()
             current_node = current_node.get_best_move()
             print()
@@ -84,7 +82,8 @@ def main() -> None:
             print('Your last move is forced', end='')
             for _ in range(3):
                 print('.', end='')
-                sleep(1)
+                sleep(0.5)
+            print()
             current_node = current_node.children[0]
         # Get a move from the user
         else:

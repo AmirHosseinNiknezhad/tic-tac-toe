@@ -1,7 +1,12 @@
 from copy import deepcopy
+from json import dumps
 
 
 class Node:
+    nodes: dict[str, 'Node'] = {}
+    node_count = 0
+    duplicate_count = 0
+
     def __init__(self, turn: int, position: list[list[int]]) -> None:
         self.side_to_move = turn
         self.position = position
@@ -49,15 +54,26 @@ class Node:
         for i in range(3):
             for j in range(3):
                 if self.position[i][j] == 0:
-                    next_turn = 1 if self.side_to_move == 2 else 2
-                    new_position = deepcopy(self.position)
-                    new_position[i][j] = self.side_to_move
-                    new_child = Node(next_turn, new_position)
-                    new_child.check_winner_or_drawn()
-                    self.append_child(new_child)
-                    new_child.create_children_recursively()
+                    self.position[i][j] = self.side_to_move
+                    key = dumps(self.position)
+                    if key in Node.nodes:
+                        self.position[i][j] = 0
+                        new_child = Node.nodes[key]
+                        self.append_child(new_child)
+                        Node.duplicate_count += 1
+                        Node.node_count += 1
 
-    # TODO understand
+                    else:
+                        next_turn = 1 if self.side_to_move == 2 else 2
+                        new_position = deepcopy(self.position)
+                        self.position[i][j] = 0
+                        new_child = Node(next_turn, new_position)
+                        new_child.check_winner_or_drawn()
+                        self.append_child(new_child)
+                        Node.nodes[key] = new_child
+                        Node.node_count += 1
+                        new_child.create_children_recursively()
+
     def set_minimax_recursively(self, depth: int = 0) -> int:
         if self.winner:
             self.minimax_value = 10 - depth if self.winner == 1 else depth - 10
@@ -79,8 +95,7 @@ class Node:
                 min_eval = min(min_eval, eval)
             self.minimax_value = min_eval
             return min_eval
-
-    # TODO understand
+ 
     def get_best_move(self) -> 'Node':
         best_move = self
         if self.side_to_move == 1:
