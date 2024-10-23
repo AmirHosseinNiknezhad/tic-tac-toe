@@ -1,4 +1,6 @@
-.devcontainer
-.venv
+.devcontainer/
+.venv/
+
+__pychache__/
 
 *.pkl
