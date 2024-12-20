@@ -4,8 +4,6 @@ from json import dumps
 
 class Node:
     nodes: dict[str, 'Node'] = {}
-    node_count = 0
-    duplicate_count = 0
 
     def __init__(self, turn: int, position: list[list[int]]) -> None:
         self.side_to_move = turn
@@ -60,8 +58,6 @@ class Node:
                         self.position[i][j] = 0
                         new_child = Node.nodes[key]
                         self.append_child(new_child)
-                        Node.duplicate_count += 1
-                        Node.node_count += 1
 
                     else:
                         next_turn = 1 if self.side_to_move == 2 else 2
@@ -71,7 +67,6 @@ class Node:
                         new_child.check_winner_or_drawn()
                         self.append_child(new_child)
                         Node.nodes[key] = new_child
-                        Node.node_count += 1
                         new_child.create_children_recursively()
 
     def set_minimax_recursively(self, depth: int = 0) -> int:
@@ -95,7 +90,7 @@ class Node:
                 min_eval = min(min_eval, eval)
             self.minimax_value = min_eval
             return min_eval
- 
+
     def get_best_move(self) -> 'Node':
         best_move = self
         if self.side_to_move == 1:

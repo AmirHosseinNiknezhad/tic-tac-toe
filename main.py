@@ -1,13 +1,13 @@
 from copy import deepcopy
-from os import system, path
-from random import choice
+from os import name, path, system
 from pickle import dump, load
+from random import choice
 from time import sleep
 from node import Node
 
 
 def main() -> None:
-    system('clear')
+    system('cls' if name == 'nt' else 'clear')
     print('Let\'s play to Tic-Tac-Toe!')
 
     # Ask the user which side they want to play
@@ -105,11 +105,13 @@ def main() -> None:
                     else:
                         print('Available moves:', available_moves, end=' ')
                     move = input()
-                    if move == '':
-                        raise ValueError('You didn\'t enter a number')
-                    if int(move) not in number_to_move:
-                        raise ValueError('Invalid input')
-                    i, j = number_to_move[int(move)]
+                    if not move.isdigit():
+                        raise ValueError(
+                            'Invalid input, please enter a number')
+                    move = int(move)
+                    if move not in number_to_move:
+                        raise ValueError('Invalid move')
+                    i, j = number_to_move[move]
                     if current_node.position[i][j] != 0:
                         raise ValueError('Cell already occupied')
                     break
@@ -130,7 +132,7 @@ def cache_tree(root: Node) -> None:
 
 
 def load_cached_tree() -> None | Node:
-    if path.exists(path='tree-cache.pkl'):
+    if path.exists('tree-cache.pkl'):
         with open('tree-cache.pkl', mode='rb') as file:
             return load(file)
     return None
@@ -157,8 +159,8 @@ def get_yes_or_no(prompt: str, random: bool = False, default: str | None = None)
                 else:
                     raise ValueError("Please input Either Y or N")
             else:
-                raise ValueError(f'Please input Y or N {
-                                 'or press Enter' if random else ''} {f'or press Enter to choose {default}' if default else ''}')
+                raise ValueError(f'Please input Y or N {'or press Enter' if random else ''} {
+                                 f'or press Enter to choose {default}' if default else ''}')
         except ValueError as e:
             print(e)
 
