@@ -1,7 +1,2 @@
-.devcontainer/
-.venv/
-
 __pychache__/
-
 *.pkl
-*.pyc
