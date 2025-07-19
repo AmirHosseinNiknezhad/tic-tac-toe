@@ -27,6 +27,7 @@ def main() -> None:
 
     # Some necessary variables
     starting_side = human_side if starting_player == "human" else computer_side
+
     number_to_move = {
         1: (0, 0),
         2: (0, 1),
@@ -56,7 +57,8 @@ def main() -> None:
         root.set_minimax_recursively()
         cache_tree(root)
     # Either set an empty board as the starting position for the human or select a random first move for the AI
-    current_node: Node = root if starting_player == "human" else choice(root.children)
+    current_node: Node = root if starting_player == "human" else choice(
+        root.children)
     # Game loop
     while True:
         print(current_node.to_str(starting_side))
@@ -137,7 +139,8 @@ def main() -> None:
                         print("Available moves:", available_moves, end=" ")
                     move = input()
                     if not move.isdigit():
-                        raise ValueError("Invalid input, please enter a number")
+                        raise ValueError(
+                            "Invalid input, please enter a number")
                     move = int(move)
                     if move not in number_to_move:
                         raise ValueError("Invalid move")
@@ -191,7 +194,7 @@ def get_yes_or_no(prompt: str, random: bool = False, default: str | None = None)
             else:
                 raise ValueError(
                     f"Please input Y or N {'or press Enter' if random else ''} {
-                                 f'or press Enter to choose {default}' if default else ''}"
+                        f'or press Enter to choose {default}' if default else ''}"
                 )
         except ValueError as e:
             print(e)
