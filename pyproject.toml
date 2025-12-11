@@ -1,0 +1,7 @@
+[project]
+name = "tic-tac-toe"
+version = "0.1.0"
+description = "Simple Tic-Tac-Toe game with the ablility to evaluate positions and play the game perfectly"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = []
