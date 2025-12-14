@@ -55,7 +55,12 @@ def main() -> None:
             print(f"Eval: {current_node.minimax_value}")
         # End the game if the board is full or if a player has won
         if current_node.state in (GameState.SIDE1_WIN, GameState.SIDE2_WIN):
-            if GameState.SIDE1_WIN and starting_player == "computer" or GameState.SIDE2_WIN and starting_player == "human":
+            if (
+                current_node.state == GameState.SIDE1_WIN
+                and starting_player == "computer"
+            ) or (
+                current_node.state == GameState.SIDE2_WIN and starting_player == "human"
+            ):
                 print("\n🤖 Computer wins! Well played.\n")
             else:
                 print("\n🎉 You win! Congratulations!\n")

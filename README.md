@@ -23,7 +23,7 @@ cd tic-tac-toe
 
 Run the game:
 ```bash
-python tic_tac_toe.py
+python main.py
 ```
 
 ## Rules
@@ -58,12 +58,12 @@ cd tic-tac-toe
 
 Run the game:
 ```bash
-python tic_tac_toe.py
+python main.py
 ```
 
 Alternatively, you can use UV to manage the environment:
 ```bash
-uv run tic_tac_toe.py
+uv run main.py
 ```
 
 (UV is optional and not required to run the game)
