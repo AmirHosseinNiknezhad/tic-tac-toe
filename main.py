@@ -26,7 +26,6 @@ def main() -> None:
     decision = get_yes_or_no("Would you like to go first?", random=True)
     starting_player = "human" if decision == "yes" else "computer"
     print(f"✓ {'You' if starting_player == 'human' else 'Computer'} will start\n")
-    starting_side = human_side if starting_player == "human" else computer_side
     # Ask if the user wants to see the evaluation of the current and possible positions
     decision = get_yes_or_no("Show position evaluations?", default="no")
     show_eval = decision == "yes"
@@ -48,6 +47,7 @@ def main() -> None:
         print(" ✓ Done!\n")
     # Either set an empty board as the starting position for the human or select a random first move for the AI
     current_node: Node = root if starting_player == "human" else choice(root.children)
+    starting_side = human_side if starting_player == "human" else computer_side
     # Game loop
     while True:
         print(current_node.to_str(starting_side))
@@ -55,11 +55,7 @@ def main() -> None:
             print(f"Eval: {current_node.minimax_value}")
         # End the game if the board is full or if a player has won
         if current_node.state in (GameState.SIDE1_WIN, GameState.SIDE2_WIN):
-            side1_is_computer = starting_player == "computer"
-            winner_is_computer = (
-                current_node.state == GameState.SIDE1_WIN and side1_is_computer
-            ) or (current_node.state == GameState.SIDE2_WIN and not side1_is_computer)
-            if winner_is_computer:
+            if GameState.SIDE1_WIN and starting_player == "computer" or GameState.SIDE2_WIN and starting_player == "human":
                 print("\n🤖 Computer wins! Well played.\n")
             else:
                 print("\n🎉 You win! Congratulations!\n")
@@ -72,18 +68,12 @@ def main() -> None:
         if (current_node.side_to_move == 1 and starting_player == "computer") or (
             current_node.side_to_move == 2 and starting_player == "human"
         ):
-            print("🤖 Computer is thinking", end="", flush=True)
-            for _ in range(3):
-                print(".", end="", flush=True)
-                sleep(0.5)
+            simulate_thinking("🤖 Computer is thinking")
             print("\n")
             current_node = current_node.get_best_move()
         # Make the move for the user if it's forced
         elif len(current_node.children) == 1:
-            print("⚡ Your move is forced", end="", flush=True)
-            for _ in range(3):
-                print(".", end="", flush=True)
-                sleep(0.5)
+            simulate_thinking("⚡ Your move is forced")
             print("\n")
             current_node = current_node.get_best_move()
         # Get a move from the user
@@ -218,6 +208,14 @@ def get_yes_or_no(prompt: str, random: bool = False, default: str | None = None)
                 raise ValueError("Please enter Y, N, or press Enter.")
         except ValueError as e:
             print(f"❌ {e}")
+
+
+def simulate_thinking(message: str) -> None:
+    print(message, end="", flush=True)
+    for _ in range(3):
+        print(".", end="", flush=True)
+        sleep(0.5)
+    print("\n")
 
 
 if __name__ == "__main__":
