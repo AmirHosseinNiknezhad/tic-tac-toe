@@ -108,7 +108,7 @@ def load_cached_tree() -> None | Node:
 
 def build_tree() -> Node:
     initial_position = tuple(tuple(0 for _ in range(3)) for _ in range(3))
-    root = Node(turn=1, position=initial_position)
+    root = Node(side_to_move=1, position=initial_position)
     Node.nodes[initial_position] = root
     root.create_children_recursively()
     root.set_minimax_recursively()

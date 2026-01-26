@@ -16,8 +16,10 @@ class GameState(Enum):
 class Node:
     nodes: ClassVar[dict[tuple[tuple[int, ...], ...], "Node"]] = {}
 
-    def __init__(self, turn: int, position: tuple[tuple[int, ...], ...]) -> None:
-        self.side_to_move = turn
+    def __init__(
+        self, side_to_move: int, position: tuple[tuple[int, ...], ...]
+    ) -> None:
+        self.side_to_move = side_to_move
         self.position = position
         self.children: list[Node] = []
         self.state: GameState = Node.check_winner_or_drawn(position)
@@ -40,8 +42,8 @@ class Node:
         new_position = cls.position_with_move(
             parent.position, i, j, parent.side_to_move
         )
-        next_turn = 1 if parent.side_to_move == 2 else 2
-        return cls(next_turn, new_position)
+        next_side_to_move = 1 if parent.side_to_move == 2 else 2
+        return cls(next_side_to_move, new_position)
 
     def to_str(self, starting_side: str) -> str:
         second_side = "X" if starting_side == "O" else "O"

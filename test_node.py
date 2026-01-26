@@ -1,6 +1,6 @@
 import pytest
 
-from node import DRAW_SCORE, GameState, Node, WIN_SCORE
+from node import DRAW_SCORE, WIN_SCORE, GameState, Node
 
 
 class TestCheckWinnerOrDrawn:
