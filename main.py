@@ -131,6 +131,7 @@ def load_cached_tree() -> Node | None:
 
 
 def build_tree() -> Node:
+    Node.nodes.clear()
     initial_position = tuple(tuple(0 for _ in range(3)) for _ in range(3))
     root = Node(side_to_move=1, position=initial_position)
     Node.nodes[initial_position] = root
