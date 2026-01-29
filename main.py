@@ -1,6 +1,8 @@
 import argparse
+import hashlib
 from os import path
-from pickle import dump, load
+from pathlib import Path
+from pickle import UnpicklingError, dump, load
 from random import choice
 from time import sleep
 
@@ -94,16 +96,37 @@ def main() -> None:
             print()
 
 
+CACHE_FILE = "tree-cache.pkl"
+NODE_FILE = Path(__file__).parent / "node.py"
+
+
+def get_cache_version() -> str:
+    source = NODE_FILE.read_text()
+    return hashlib.md5(source.encode()).hexdigest()
+
+
 def cache_tree(root: Node) -> None:
-    with open("tree-cache.pkl", "wb") as file:
-        dump(root, file)
+    with open(CACHE_FILE, "wb") as file:
+        dump({"version": get_cache_version(), "tree": root}, file)
 
 
-def load_cached_tree() -> None | Node:
-    if path.exists("tree-cache.pkl"):
-        with open("tree-cache.pkl", mode="rb") as file:
-            return load(file)
-    return None
+def load_cached_tree() -> Node | None:
+    if not path.exists(CACHE_FILE):
+        return None
+    try:
+        with open(CACHE_FILE, mode="rb") as file:
+            data = load(file)
+        if not isinstance(data, dict):
+            print("⚠️  Cache format outdated, rebuilding...")
+            return None
+        current_version = get_cache_version()
+        if data.get("version") != current_version:
+            print("⚠️  Node class changed, rebuilding cache...")
+            return None
+        return data.get("tree")
+    except (UnpicklingError, EOFError, KeyError, AttributeError) as e:
+        print(f"⚠️  Cache corrupted ({type(e).__name__}), rebuilding...")
+        return None
 
 
 def build_tree() -> Node:
