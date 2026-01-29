@@ -76,13 +76,13 @@ def main() -> None:
             current_node.side_to_move == 2 and starting_player == "human"
         ):
             simulate_thinking("🤖 Computer is thinking")
-            print("\n")
+            print()
             best_moves = current_node.get_best_moves()
             current_node = choice(best_moves)
         # Make the move for the user if it's forced
         elif len(current_node.children) == 1:
             simulate_thinking("⚡ Your move is forced")
-            print("\n")
+            print()
             current_node = current_node.children[0]
         # Get a move from the user
         else:
@@ -245,7 +245,7 @@ def simulate_thinking(message: str) -> None:
     for _ in range(3):
         print(".", end="", flush=True)
         sleep(0.5)
-    print("\n")
+    print()
 
 
 if __name__ == "__main__":
