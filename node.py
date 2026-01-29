@@ -136,22 +136,28 @@ class Node:
             self.minimax_value = int(min_eval)
             return self.minimax_value
 
-    def get_best_move(self) -> "Node":
-        best_move = self
+    def get_best_moves(self) -> list["Node"]:
         if self.side_to_move == 1:
             best_value = -WIN_SCORE
+            best_moves: list["Node"] = []
             for child in self.children:
                 if child.minimax_value is None:
                     raise TypeError("Expected evaluated minimax_value on child node")
                 if child.minimax_value > best_value:
                     best_value = child.minimax_value
-                    best_move = child
+                    best_moves = [child]
+                elif child.minimax_value == best_value:
+                    best_moves.append(child)
         else:
             best_value = WIN_SCORE
+            best_moves = []
             for child in self.children:
                 if child.minimax_value is None:
                     raise TypeError("Expected evaluated minimax_value on child node")
                 if child.minimax_value < best_value:
                     best_value = child.minimax_value
-                    best_move = child
-        return best_move
+                    best_moves = [child]
+                elif child.minimax_value == best_value:
+                    best_moves.append(child)
+
+        return best_moves
