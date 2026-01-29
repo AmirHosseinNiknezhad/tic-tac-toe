@@ -58,9 +58,7 @@ class Node:
         self.children.append(child)
 
     @staticmethod
-    def evaluate(
-        position: tuple[tuple[int, ...], ...], side_to_move: int, depth: int = 0
-    ) -> int:
+    def evaluate(position: tuple[tuple[int, ...], ...], depth: int = 0) -> int:
         state = Node.check_winner_or_drawn(position)
         if state == GameState.SIDE1_WIN:
             return WIN_SCORE - depth
@@ -117,7 +115,7 @@ class Node:
 
     def set_minimax_recursively(self, depth: int = 0) -> int:
         if self.state != GameState.IN_PROGRESS:
-            self.minimax_value = Node.evaluate(self.position, self.side_to_move, depth)
+            self.minimax_value = Node.evaluate(self.position, depth)
             return self.minimax_value
         if self.side_to_move == 1:
             max_eval = -inf
