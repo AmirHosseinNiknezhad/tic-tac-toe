@@ -1,5 +1,7 @@
 import argparse
 import hashlib
+import os
+import sys
 from os import path
 from pathlib import Path
 from pickle import UnpicklingError, dump, load
@@ -191,6 +193,7 @@ def prompt_user_move(
         else:
             print(f"Available: {available_moves} ", end="")
         try:
+            clear_stdin()
             move = input("> ").strip()
             if move == "":
                 move = choice(available_moves)
@@ -222,6 +225,7 @@ def get_yes_or_no(prompt: str, random: bool = False, default: str | None = None)
         prompt += "[Y/N] "
     while True:
         try:
+            clear_stdin()
             decision = input(prompt).lower().strip()
             if decision in ["n", "no"]:
                 return "no"
@@ -246,6 +250,34 @@ def simulate_thinking(message: str) -> None:
         print(".", end="", flush=True)
         sleep(0.5)
     print()
+
+
+def clear_stdin() -> None:
+    """Clear any pending input from the standard input buffer."""
+    try:
+        if os.name == "nt":
+            if not sys.stdin.isatty():
+                return
+            import msvcrt
+
+            while msvcrt.kbhit():
+                msvcrt.getwch()
+        elif os.name == "posix":
+            import select
+
+            if sys.stdin.isatty():
+                from termios import TCIFLUSH, tcflush
+
+                tcflush(sys.stdin.fileno(), TCIFLUSH)
+            else:
+                while True:
+                    readable, _, _ = select.select([sys.stdin], [], [], 0)
+                    if not readable:
+                        break
+                    if sys.stdin.read(1024) == "":
+                        break
+    except Exception:
+        pass
 
 
 if __name__ == "__main__":
